@@ -1,0 +1,59 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+*.pyo
+*.pyc
+*.pyd
+build/
+dist/
+wheels/
+*.egg-info/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+.sublime-project
+.sublime-workspace
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+*.cover
+
+# Environment and configuration
+.env
+.env.local
+.env.*.local
+.python-version
+
+# OS-specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Documentation
+site/
+docs/_build/
+
+# Miscellaneous
+*.log
+*.pot
+*.mo
+dist/
+build/
+*.pdf
+*.zip
