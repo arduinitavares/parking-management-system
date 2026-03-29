@@ -105,10 +105,18 @@ class TestParkingStrategy(unittest.TestCase):
         """Test coverage for the ABC stubs."""
         with self.assertRaises(NotImplementedError):
             PARKING_MANAGER_MODULE.ParkingStrategy.allocate_slot(
-                self=None, lot=None, regnum="", make="", model="", color="", motor=0
+                self=cast(Any, None),
+                lot=cast(Any, None),
+                regnum="",
+                make="",
+                model="",
+                color="",
+                motor=0,
             )
         with self.assertRaises(NotImplementedError):
-            PARKING_MANAGER_MODULE.ParkingObserver.update(self=None, event_type="", message="")
+            PARKING_MANAGER_MODULE.ParkingObserver.update(
+                self=cast(Any, None), event_type="", message=""
+            )
 
 
 if __name__ == "__main__":
