@@ -25,7 +25,9 @@ class TestObserverUIBaseline(unittest.TestCase):
 
     def setUp(self) -> None:
         """Prepare a ParkingLot instance and configure isolated DI mock."""
-        self.ui_state = UI_STATE_CLASS()
+        # Create a mock UIState where StringVars/IntVars are also mocks
+        self.ui_state = MagicMock()
+
         self.vehicle_repo = VEHICLE_REPO_CLASS()
         self.ev_repo = EV_REPO_CLASS()
         self.lot = PARKING_LOT_CLASS(self.ui_state, self.vehicle_repo, self.ev_repo)
