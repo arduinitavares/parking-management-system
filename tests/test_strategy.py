@@ -4,6 +4,7 @@ import importlib
 import sys
 import unittest
 from pathlib import Path
+from typing import Any, cast
 from unittest.mock import MagicMock
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -77,14 +78,14 @@ class TestParkingStrategy(unittest.TestCase):
             pass
 
         # Manually fill the single available EV slot natively
-        self.lot.ev_repo._store["1"] = Dummy()
+        self.lot.ev_repo._store["1"] = cast(Any, Dummy())
 
         # When get_empty_ev_slot() returns None because "1" is already artificially mapped:
         res3 = self.ev_strategy.allocate_slot(self.lot, "ERR1", "Hyundai", "Ioniq", "Blue", 0)
         self.assertEqual(res3, -1)
 
         # Same bypass test for RegularParkingStrategy
-        self.lot.vehicle_repo._store["1"] = Dummy()
+        self.lot.vehicle_repo._store["1"] = cast(Any, Dummy())
         res4 = self.reg_strategy.allocate_slot(self.lot, "ERR2", "Ford", "Mustang", "Red", 0)
         self.assertEqual(res4, -1)
 
