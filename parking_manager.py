@@ -502,9 +502,18 @@ def main() -> None:  # noqa: PLR0915
     ui_state = UIState()
     container.register_instance(UIState, ui_state)
 
+    vehicle_repo = VehicleRepository()
+    ev_repo = EVRepository()
+    container.register_instance(VehicleRepository, vehicle_repo)
+    container.register_instance(EVRepository, ev_repo)
+
     display_observer = TkinterDisplayObserver(container.resolve(tk.Text))
 
-    parkinglot = ParkingLot(container.resolve(UIState))
+    parkinglot = ParkingLot(
+        container.resolve(UIState),
+        container.resolve(VehicleRepository),
+        container.resolve(EVRepository),
+    )
     parkinglot.attach(display_observer)
 
     # Store parking lot loosely so commands execute correctly
