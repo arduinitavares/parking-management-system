@@ -1,96 +1,92 @@
-# EasyParkPlus: Quick-Start Guide
+# EasyParkPlus: Parking Management System
 
-Welcome to the EasyParkPlus Parking Management System refactoring project. This document is designed to help onboarding developers rapidly locate our implemented architecture patterns and execute their supporting boundary tests.
+> A software design & architecture project demonstrating OO design pattern implementation, anti-pattern remediation, and a DDD-based microservices architecture proposal.
 
-## 1. Concrete Design Pattern Locations
-We are actively refactoring the single-lot prototype's architecture to eliminate critical tech debt (e.g., "God Object" and "Overly Nested Conditionals"). 
-
-### Pattern #1: Strategy Pattern
-- **Intent:** Abstracts divergent parking allocation algorithms (verifying capacity constraints, managing array indices, and triggering subclass instantiations) into interchangeable objects based on vehicle category (EV vs. Regular), enforcing the Open/Closed Principle.
-- **Location:** `parking_manager.py`
-  - *Abstractions:* `ParkingStrategy`, `RegularParkingStrategy`, `ElectricParkingStrategy`
-  - *Context Logic:* Delegated exclusively within the `ParkingLot.park` method.
-
-### Pattern #2: Observer Pattern
-- **Intent:** Slices the core `ParkingLot` domain structure away from the static Tkinter desktop rendering bindings (`tfield`, `StringVar`) using a publisher-subscriber event model to broadcast state mutations cleanly.
-- **Location:** `parking_manager.py`
-  - *Context Logic:* Applied natively during status readouts (`status`, `charge_status`) and mutating actions (`park_car`, `make_lot`).
+This project refactors a legacy single-lot parking prototype into a maintainable, extensible application and proposes a scalable microservices design to support multi-facility parking and EV charging management.
 
 ---
 
-## 2. Automated Test Execution
-The architectural patterns are defended by Python's standard `unittest` framework running identically in CI and local setups via modern `uv` dependency wrapping. Our tests intelligently mock GUI initialization to allow for fully headless validations.
-
-From this project root directory (`/Users/aaat/projects/parking-management-system`), run the commands below:
-
-**To execute the entire project behavioral suite:**
-```bash
-uv run python -m unittest discover tests/
-```
-
-**To run targeted boundaries during refactoring:**
-```bash
-# Validate Pattern #1 (Strategy):
-uv run python -m unittest tests/test_park.py
-
-# Validate Pattern #2 (Observer):
-uv run python -m unittest tests/test_observer.py
-```
-
-*(A successful run will indicate the exact number of passed tests in `< 1.000s` and conclude with `OK`)*
-
----
-
-## 3. Setup and Execution Instructions
+## Quick-Start Guide
 
 ### Prerequisites
 - **Python 3.13+**: The codebase relies on modern typing features (`TypeAlias`, `A|B` unions, etc.).
 - (Optional but recommended) `uv`: Fast Python package and project manager.
 
-### Standard Setup (Using standard `venv` and `pip`)
-1. **Clone/Extract** the repository and navigate to the root directory.
-2. **Create a virtual environment**:
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
-   ```
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-### Quick Setup (Using `uv`)
-If you have `uv` installed, it simplifies the setup:
+### Quick Setup (Using `uv` — Recommended)
 ```bash
 uv sync
 ```
 
-### Execution Steps
-To launch the primary application with its graphical Tkinter interface:
+### Standard Setup (Using `venv`)
 ```bash
-# Using standard venv
-python parking_manager.py
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
+pip install -e .
+```
 
-# Or via uv
+### Run the Application
+```bash
+# Using uv
 uv run python parking_manager.py
+
+# Or using standard venv
+python parking_manager.py
 ```
 
 ---
 
-## 4. Core Parking Operations
+## Running Tests
 
-The application provides a comprehensive UI to manage a dedicated parking facility capable of handling regular combustion-engine vehicles and fully electric vehicles (EVs). 
+The architectural patterns are defended by Python's standard `unittest` framework with headless mocking for fully CI-compatible validations.
 
-1. **Lot Creation**: Initializes the core dimension of the facility. You can specify:
-   - *Number of Regular Spaces*: Slots purely for standard cars/trucks/motorcycles.
-   - *Number of EV Spaces*: Dedicated electric charging slots.
-   - *Floor Level*: The parking floor identifier (e.g., Level 1).
-2. **Park Car**: Allocates an incoming vehicle to an open slot.
-   - Takes vehicle parameters: *Make*, *Model*, *Color*, and *Registration #*.
-   - Routes transparently to either standard lots or EV lots via the Strategy pattern.
-3. **Remove Car**: Deallocates a tracked vehicle freeing up capacity.
-   - Provide the specific *Slot ID* and specify if it is an *EV*.
-4. **Occupancy Status Checks**: Read real-time parking maps.
-   - Use the **Operations / Query** buttons to list *Vehicle Status* across regular slots.
-   - View explicit *EV Charge Status*.
-   - Filter queries precisely by *Color* or *Registration #* to quickly locate lost vehicles.
+```bash
+# Run the full test suite
+uv run python -m unittest discover tests/
+
+# Run targeted pattern tests
+uv run python -m unittest tests/test_park.py      # Strategy Pattern
+uv run python -m unittest tests/test_observer.py  # Observer Pattern
+```
+
+A successful run will report `18 tests in < 1.000s` and conclude with `OK`.
+
+---
+
+## Design Patterns Implemented
+
+### Pattern #1: Strategy Pattern
+- **Intent:** Abstracts divergent parking allocation algorithms into interchangeable objects based on vehicle category (EV vs. Regular), enforcing the Open/Closed Principle.
+- **Location:** `parking_manager.py`
+  - *Abstractions:* `ParkingStrategy`, `RegularParkingStrategy`, `ElectricParkingStrategy`
+  - *Context:* Delegated exclusively within `ParkingLot.park()`.
+
+### Pattern #2: Observer Pattern
+- **Intent:** Decouples the `ParkingLot` domain model from Tkinter GUI bindings using a publisher-subscriber event model, restoring unit testability.
+- **Location:** `parking_manager.py`
+  - *Abstractions:* `ParkingObserver`, `TkinterDisplayObserver`
+  - *Context:* Applied during status readouts and all mutating parking actions.
+
+---
+
+## Core Application Features
+
+1. **Lot Creation** — Configure regular & EV slot capacities and floor level.
+2. **Park Vehicle** — Allocates cars, motorcycles, or EVs to available slots via Strategy dispatch.
+3. **Remove Vehicle** — Deallocates a slot by ID for both regular and EV parking.
+4. **Occupancy Status** — Real-time slot map for regular and EV parking areas.
+5. **Lookup Queries** — Filter by Color or Registration # to locate specific vehicles.
+
+---
+
+## Architecture & Design Documentation
+
+The `docs/` directory contains the full architectural design record for this project:
+
+| Document | Description |
+| :--- | :--- |
+| [`consolidated_pattern_justification.md`](docs/consolidated_pattern_justification.md) | Written justification for Strategy and Observer pattern implementations. |
+| [`codebase_audit_report.md`](docs/codebase_audit_report.md) | Full anti-pattern audit and verification report (18/18 tests passing). |
+| [`ddd_context_map.md`](docs/ddd_context_map.md) | Bounded context diagram for the proposed multi-facility architecture. |
+| [`ev_charging_domain_model.md`](docs/ev_charging_domain_model.md) | DDD tactical model for the EV Charging subdomain. |
+| [`microservices_catalog.md`](docs/microservices_catalog.md) | Proposed microservices design with per-service responsibilities and databases. |
+| [`microservices_migration_guidance.md`](docs/microservices_migration_guidance.md) | Strangler Fig migration plan from monolith to microservices. |
