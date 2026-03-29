@@ -277,7 +277,10 @@ class ParkingLot:
 
     def status(self) -> None:
         """Print regular and EV occupancy details to the output text field."""
-        output = "Vehicles\nSlot\tFloor\tReg No.\t\tColor \t\tMake \t\tModel\n"
+        output = (
+            "\n[ACTION: View Lot Status]\n"
+            "Vehicles\nSlot\tFloor\tReg No.\t\tColor \t\tMake \t\tModel\n"
+        )
         self.notify("display_update", output)
         items = sorted(self.vehicle_repo._store.items(), key=lambda x: int(x[0]))
         for slotid_str, vehicle in items:
@@ -319,7 +322,10 @@ class ParkingLot:
 
     def charge_status(self) -> None:
         """Print EV charge percentages to the output text field."""
-        output = "Electric Vehicle Charge Levels\nSlot\tFloor\tReg No.\t\tCharge %\n"
+        output = (
+            "\n[ACTION: View EV Charge Status]\n"
+            "Electric Vehicle Charge Levels\nSlot\tFloor\tReg No.\t\tCharge %\n"
+        )
         self.notify("display_update", output)
 
         for slotid_str, vehicle in sorted(self.ev_repo._store.items(), key=lambda x: int(x[0])):
@@ -399,9 +405,9 @@ class ParkingLot:
 
         output = ""
         if slotnum is not None:
-            output = "Identified slot: " + str(slotnum) + "\n"
+            output = "[ACTION: Search by Registration] Identified slot: " + str(slotnum) + "\n"
         else:
-            output = "Not found\n"
+            output = "[ACTION: Search by Registration] Not found\n"
 
         self.notify("display_update", output)
 
@@ -412,15 +418,17 @@ class ParkingLot:
         regular_strs = [str(x) for x in slot_data["regular"]]
         ev_strs = [str(x) for x in slot_data["ev"]]
 
-        output = "Identified slots: " + ", ".join(regular_strs) + "\n"
+        output = "[ACTION: Search by Color] Identified slots: " + ", ".join(regular_strs) + "\n"
         self.notify("display_update", output)
-        output = "Identified slots (EV): " + ", ".join(ev_strs) + "\n"
+        output = "          Identified slots (EV): " + ", ".join(ev_strs) + "\n"
         self.notify("display_update", output)
 
     def reg_num_by_color(self) -> None:
         """Display regular and EV registrations filtered by color value."""
         regnums = self.get_reg_nums_from_color(self.ui_state.reg1_value.get())
-        output = "Registation Numbers: " + ", ".join(regnums) + "\n"
+        output = (
+            "[ACTION: Get Registration by Color] Registration Numbers: " + ", ".join(regnums) + "\n"
+        )
         self.notify("display_update", output)
 
     def make_lot(self) -> None:
@@ -438,7 +446,7 @@ class ParkingLot:
             return
 
         output = (
-            "Created a parking lot with "
+            "\n[ACTION: Lot Creation] Created a parking lot with "
             + self.ui_state.num_value.get()
             + " regular slots and "
             + self.ui_state.ev_value.get()
@@ -459,9 +467,9 @@ class ParkingLot:
             self.ui_state.ev_motor_value.get(),
         )
         if res == -1:
-            self.notify("display_update", "Sorry, parking lot is full\n")
+            self.notify("display_update", "[ACTION: Park Car] Sorry, parking lot is full\n")
         else:
-            output = "Allocated slot number: " + str(res) + "\n"
+            output = "[ACTION: Park Car] Allocated slot number: " + str(res) + "\n"
             self.notify("display_update", output)
 
     def remove_car(self) -> None:
@@ -475,12 +483,18 @@ class ParkingLot:
             return
 
         if status:
-            output = "Slot number " + str(self.ui_state.slot_value.get()) + " is free\n"
+            output = (
+                "[ACTION: Remove Car] Slot number "
+                + str(self.ui_state.slot_value.get())
+                + " is free\n"
+            )
             self.notify("display_update", output)
         else:
             self.notify(
                 "display_update",
-                "Unable to remove a car from slot: " + str(self.ui_state.slot_value.get()) + "\n",
+                "[ACTION: Remove Car] Unable to remove a car from slot: "
+                + str(self.ui_state.slot_value.get())
+                + "\n",
             )
 
 
@@ -489,7 +503,7 @@ def main() -> None:  # noqa: PLR0915
     # Scaffold DI Container and UI Context
     container = DIContainer()
     root = tk.Tk()
-    root.geometry("650x850")
+    root.geometry("750x850")
     root.resizable(False, False)
     root.title("Parking Lot Manager")
 
@@ -556,7 +570,7 @@ def main() -> None:  # noqa: PLR0915
         padx=5,
         pady=5,
     )
-    park_make_btn.grid(row=4, column=0, padx=4, pady=4)
+    park_make_btn.grid(row=4, column=0, columnspan=2, padx=4, pady=4, sticky="ew")
 
     label_car = tk.Label(root, text="Car Management", font="Arial 12 bold")
     label_car.grid(row=5, column=0, padx=10, columnspan=4)
@@ -616,7 +630,7 @@ def main() -> None:  # noqa: PLR0915
         padx=5,
         pady=5,
     )
-    park_btn.grid(column=0, row=9, padx=4, pady=4)
+    park_btn.grid(column=0, row=9, columnspan=2, padx=4, pady=4, sticky="ew")
 
     lbl_slot = tk.Label(root, text="Slot #", font="Arial 12")
     lbl_slot.grid(row=10, column=0, padx=5)
@@ -645,7 +659,7 @@ def main() -> None:  # noqa: PLR0915
         padx=5,
         pady=5,
     )
-    remove_btn.grid(column=0, row=11, padx=4, pady=4)
+    remove_btn.grid(column=0, row=11, columnspan=2, padx=4, pady=4, sticky="ew")
 
     spacer1 = tk.Label(root, text="")
     spacer1.grid(row=12, column=0)
@@ -661,7 +675,7 @@ def main() -> None:  # noqa: PLR0915
         padx=5,
         pady=5,
     )
-    slot_reg_btn.grid(column=0, row=13, padx=4, pady=4)
+    slot_reg_btn.grid(column=0, row=13, padx=4, pady=4, sticky="ew")
 
     slot1_entry = tk.Entry(root, textvariable=ui_state.slot1_value, width=12, font="Arial 12")
     slot1_entry.grid(row=13, column=1, padx=4, pady=4)
@@ -677,7 +691,7 @@ def main() -> None:  # noqa: PLR0915
         padx=5,
         pady=5,
     )
-    slot_color_btn.grid(column=2, row=13, padx=4, pady=4)
+    slot_color_btn.grid(column=2, row=13, padx=4, pady=4, sticky="ew")
 
     slot2_entry = tk.Entry(root, textvariable=ui_state.slot2_value, width=12, font="Arial 12")
     slot2_entry.grid(row=13, column=3, padx=4, pady=4)
@@ -693,7 +707,7 @@ def main() -> None:  # noqa: PLR0915
         padx=5,
         pady=5,
     )
-    reg_color_btn.grid(column=0, row=14, padx=4, pady=4)
+    reg_color_btn.grid(column=0, row=14, padx=4, pady=4, sticky="ew")
 
     reg1_entry = tk.Entry(root, textvariable=ui_state.reg1_value, width=12, font="Arial 12")
     reg1_entry.grid(row=14, column=1, padx=4, pady=4)
@@ -709,7 +723,7 @@ def main() -> None:  # noqa: PLR0915
         padx=5,
         pady=5,
     )
-    charge_status_btn.grid(column=2, row=14, padx=4, pady=4)
+    charge_status_btn.grid(column=2, row=14, padx=4, pady=4, sticky="ew")
 
     status_btn = tk.Button(
         root,
@@ -722,7 +736,7 @@ def main() -> None:  # noqa: PLR0915
         padx=5,
         pady=5,
     )
-    status_btn.grid(column=0, row=15, padx=4, pady=4)
+    status_btn.grid(column=0, row=15, columnspan=4, padx=4, pady=4, sticky="ew")
 
     tfield.grid(column=0, row=16, padx=10, pady=10, columnspan=4)
 

@@ -72,8 +72,10 @@ class TestObserverUIBaseline(unittest.TestCase):
         # Trigger the simulated CLI mapping wrapper
         self.lot.park_car()
 
-        # The baseline anti-pattern asserts the domain object directly warns the user via Tkinter
-        self.mock_tfield.insert.assert_called_with(ANY, "Sorry, parking lot is full\n")
+        # The observer should insert the correct full lot rejection message mapped to the view
+        self.mock_tfield.insert.assert_called_with(
+            ANY, "[ACTION: Park Car] Sorry, parking lot is full\n"
+        )
 
 
 if __name__ == "__main__":
