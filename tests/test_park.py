@@ -19,6 +19,9 @@ PARKING_MANAGER_MODULE = importlib.import_module("parking_manager")
 PARKING_LOT_CLASS = PARKING_MANAGER_MODULE.ParkingLot
 VEHICLE_CAR_CLASS = VEHICLE_MODULE.Car
 ELECTRIC_CAR_CLASS = ELECTRIC_VEHICLE_MODULE.ElectricCar
+UI_STATE_CLASS = PARKING_MANAGER_MODULE.UIState
+VEHICLE_REPO_CLASS = PARKING_MANAGER_MODULE.VehicleRepository
+EV_REPO_CLASS = PARKING_MANAGER_MODULE.EVRepository
 
 
 class TestParkingLotPark(unittest.TestCase):
@@ -26,7 +29,10 @@ class TestParkingLotPark(unittest.TestCase):
 
     def setUp(self) -> None:
         """Prepare a ParkingLot instance before each test."""
-        self.lot = PARKING_LOT_CLASS()
+        self.ui_state = UI_STATE_CLASS()
+        self.vehicle_repo = VEHICLE_REPO_CLASS()
+        self.ev_repo = EV_REPO_CLASS()
+        self.lot = PARKING_LOT_CLASS(self.ui_state, self.vehicle_repo, self.ev_repo)
         # Create a lot with 2 regular slots and 1 EV slot on floor 1
         self.lot.create_parking_lot(capacity=2, evcapacity=1, level=1)
 
@@ -37,8 +43,8 @@ class TestParkingLotPark(unittest.TestCase):
 
         self.assertEqual(slot_id, 1)
         self.assertEqual(self.lot.num_of_occupied_slots, 1)
-        self.assertIsInstance(self.lot.slots[0], VEHICLE_CAR_CLASS)
-        self.assertEqual(getattr(self.lot.slots[0], "regnum", None), "REG123")
+        self.assertIsInstance(self.lot.vehicle_repo.get("1"), VEHICLE_CAR_CLASS)
+        self.assertEqual(getattr(self.lot.vehicle_repo.get("1"), "regnum", None), "REG123")
 
     def test_nominal_park_ev_car(self) -> None:
         """Nominal Case: Successfully park an electric car."""
@@ -47,10 +53,8 @@ class TestParkingLotPark(unittest.TestCase):
 
         self.assertEqual(slot_id, 1)
         self.assertEqual(self.lot.num_of_occupied_ev_slots, 1)
-        self.assertIsInstance(self.lot.ev_slots[0], ELECTRIC_CAR_CLASS)
-        self.assertEqual(
-            getattr(self.lot.ev_slots[0], "regnum", None), "EV456"
-        )
+        self.assertIsInstance(self.lot.ev_repo.get("1"), ELECTRIC_CAR_CLASS)
+        self.assertEqual(getattr(self.lot.ev_repo.get("1"), "regnum", None), "EV456")
 
     def test_edge_case_lot_full(self) -> None:
         """Edge Case: Attempt to park a regular car when all regular slots are full."""
