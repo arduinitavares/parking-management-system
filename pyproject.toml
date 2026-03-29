@@ -6,4 +6,43 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "ipykernel>=7.2.0",
+    "pydantic>=2.11.0",
+    "pylint>=4.0.5",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+# Select rules that match your strict coding practices
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort (import organization)
+    "N",   # pep8-naming (naming conventions)
+    "D",   # pydocstyle (docstrings)
+    "PL",  # pylint (strict quality & no pylint warnings)
+    "ANN", # flake8-annotations (type hints)
+]
+
+ignore = [
+    "D100",    # Missing docstring in public module
+    "D104",    # Missing docstring in public package
+    "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed
+    "PLR0913", # Too many arguments in function call
+    "D203",    # 1 blank line required before class docstring (conflicts with D211)
+]
+
+[tool.ruff.lint.isort]
+# Organize imports: stdlib, third-party, local
+known-first-party = ["parking_management_system"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google" # Standard readable docstring format
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.8",
 ]
